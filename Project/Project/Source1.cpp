@@ -3,65 +3,35 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <set>
 
-struct Graph {
-	std::vector<std::vector<double>> contents;
+int count(std::string input){
+	std::string line;
+	std::set<int> unique;
 
-	int rows() {
-		return contents.size();
+    std::ifstream file(input);
+    if(file.is_open()){
+        while(file.good()){
+            getline(file,line);
+
+            std::string part;
+            std::stringstream ss(line);
+
+            while(ss){
+                getline(ss, part, '(');
+                getline(ss, part, ',');
+                unique.insert(std::stoi(part));
+                getline(ss, part, ',');
+                unique.insert(std::stoi(part));
+                getline(ss, part, ')');
+                getline(ss, part, ',');
+            }
+        }
 	}
+    int u=unique.size();
+	return u;
+}
 
-	int columns() {
-		return contents[0].size();
-	}
-
-	void read(std::string input) {
-
-		std::string line;
-		double i = 0;
-		double j = 0;
-
-		std::ifstream file(input);
-
-		if (file.is_open()) {
-
-			while (file.good()) {
-				getline(file, line);
-				std::cout << line << std::endl;
-			}
-			std::string part;
-			std::stringstream ss(line);
-
-			for (i = 0; i < 3; i++) {
-				std::vector<double> row;
-				std::getline(ss, part, '(');
-
-				std::getline(ss, part, ',');
-				row.push_back(std::stod(part));
-
-				std::getline(ss, part, ',');
-				row.push_back(std::stod(part));
-
-				std::getline(ss, part, ')');
-				row.push_back(std::stod(part));
-
-				contents.push_back(row);
-			}
-			double rows = contents.size();
-			double cols = contents[0].size();
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < cols; j++) {
-					std::cout << contents[i][j]<<", ";
-				}
-				std::cout << std::endl;
-			}
-		}
-		else {
-			std::cout << "there is no such a file" << std::endl;
-		}
-		file.close();
-	}
-};
 
 void usage(){
 	std::cout<<"Options: "<<std::endl;
@@ -88,14 +58,14 @@ int main(int argc, char* argv[]) {
 			i++;
 		}else if(argv[i]==out){
 			output=argv[i+1];
-			std::ofstream file(output);
-			file.close();
 			i++;
 		}else{
 			usage();
+			return 0;
 		}
 	}
-	Graph a;
-	a.read(input);
+
+	int u=count(input);
+
 	return 0;
 }
