@@ -10,8 +10,14 @@ class Graph{
 	private:
 		std::vector<std::pair<double,std::pair<int,int>>> edges;
 		std::vector<std::vector<double>> contents;
+		int *parent;
+		std::vector<std::pair<double,std::pair<int,int>>> tmp;
 	public:
 		void read(std::string input);
+		Graph(int nodes);
+		int find(int x);
+		void unite(int a, int b);
+		void MST();
 };
 
 void Graph::read(std::string input){
@@ -54,6 +60,42 @@ void Graph::read(std::string input){
 		std::cout<< "there is no file with that name" <<std::endl;
 	}
 	file.close();
+}
+
+Graph::Graph(int nodes){
+	parent=new int[nodes];
+	for(int i=0; i<nodes; i++){
+		parent[i]=i;
+	}
+}
+
+int Graph::find(int x){
+	if(x==parent[x]){
+		return x;
+	}else{
+		return find(parent[x]);
+	}
+}
+
+void Graph::unite(int a, int b){
+	int fa=find(a);
+	int fb=find(b);
+	parent[fa]=fb;
+}
+
+void Graph::MST(){
+	int a,b;
+	double weight;
+	sort(edges.begin(),edges.end());
+	for(int i=0; i<edges.size(); i++){
+		a=find(edges[i].second.first);
+		b=find(edges[i].second.second);
+		weight=find(edges[i].first);
+		if(a!=b){
+			tmp.push_back(edges[i]);
+			unite(a,b);
+		}
+	}
 }
 
 int count(std::string input){
