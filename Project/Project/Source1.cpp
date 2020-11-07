@@ -13,17 +13,23 @@ class Graph{
 		int *parent;
 		std::vector<std::pair<double,std::pair<int,int>>> tmp;
 	public:
-		void read(std::string input);
 		Graph(int nodes);
+		void read(std::string input);
 		int find(int x);
 		void unite(int a, int b);
 		void MST();
+		void print(std::string outpout);
 };
+
+Graph::Graph(int nodes){
+	parent=new int[nodes];
+	for(int i=0; i<nodes; i++){
+		parent[i]=i;
+	}
+}
 
 void Graph::read(std::string input){
 	std::string line;
-	std::string part;
-	std::vector<double> row;
 	
 	double rows;
 
@@ -31,15 +37,17 @@ void Graph::read(std::string input){
 	if (file.is_open()){
 		while(file.good()){
 			getline(file, line);
+			std::string part;
 			std::stringstream ss(line);
 			while(ss){
+				std::vector<double> row;
 				getline(ss, part, '(');
 				getline(ss, part, ',');
 				row.push_back(std::stoi(part));
 				getline(ss, part, ',');
 				row.push_back(std::stoi(part));
 				getline(ss, part, ')');
-				row.push_back(std::stoi(part));
+				row.push_back(std::stod(part));
 				getline(ss, part, ',');
 				contents.push_back(row);
 			}
@@ -47,26 +55,19 @@ void Graph::read(std::string input){
 
 		rows=contents.size();
 
-		int node1, node2;
-		double weight;
+		int x, y;
+		double w;
 
 		for(int i=0; i<rows; i++){
-			node1=contents[i][0];
-			node2=contents[i][1];
-			weight=contents[i][2];
-			edges.push_back(std::make_pair(weight,std::make_pair(node1,node2)));
+			x=contents[i][0];
+			y=contents[i][1];
+			w=contents[i][2];
+			edges.push_back(std::make_pair(w,std::make_pair(x,y)));
 		}
 	}else{
 		std::cout<< "there is no file with that name" <<std::endl;
 	}
 	file.close();
-}
-
-Graph::Graph(int nodes){
-	parent=new int[nodes];
-	for(int i=0; i<nodes; i++){
-		parent[i]=i;
-	}
 }
 
 int Graph::find(int x){
@@ -96,6 +97,19 @@ void Graph::MST(){
 			unite(a,b);
 		}
 	}
+}
+
+void Graph::print(std::string output){
+	std::ofstream file(output);
+	if(file.is_open()){
+		file << "Edge   : Weight: \n";
+		std::cout<<"Edge   : Weight:"<<std::endl;
+		for(int i=0; i<tmp.size(); i++){
+			file << tmp[i].second.first << " - " << tmp[i].second.second << "  : " << tmp[i].first << "\n";
+			std::cout << tmp[i].second.first << " - " << tmp[i].second.second << "  : " << tmp[i].first << std::endl;
+		}
+	}
+	file.close();
 }
 
 int count(std::string input){
@@ -136,19 +150,16 @@ int main(int argc, char* argv[]) {
 	std::string input;
 	std::string output;
 
-	std::string in="-i";
-	std::string out="-o";
-
     if (argc < 3) {
     	usage();
     	return 0;
 	}
 
 	for(int i=1;i<argc;i++){
-		if(argv[i]==in){
+		if((std::string(argv[i])=="-i")&&(std::string(argv[i+1])!="-o")){
 			input=argv[i+1];
 			i++;
-		}else if(argv[i]==out){
+		}else if((std::string(argv[i])=="-o")&&(std::string(argv[i+1])!="-i")){
 			output=argv[i+1];
 			i++;
 		}else{
@@ -158,6 +169,12 @@ int main(int argc, char* argv[]) {
 	}
 
 	int u=count(input);
+
+	Graph a(u);
+
+	a.read(input);
+	a.MST();
+	a.print(output);
 
 	return 0;
 }
