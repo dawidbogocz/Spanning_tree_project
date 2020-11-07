@@ -65,7 +65,7 @@ void Graph::read(std::string input){
 			edges.push_back(std::make_pair(w,std::make_pair(x,y)));
 		}
 	}else{
-		std::cout<< "there is no file with that name" <<std::endl;
+		std::cout<< "File "<< input <<" not found!" <<std::endl;
 	}
 	file.close();
 }
@@ -143,6 +143,7 @@ void usage(){
 	std::cout<<"Options: "<<std::endl;
 	std::cout<<"-i input   -> Select input file"<<std::endl;
 	std::cout<<"-o output  -> Select output file"<<std::endl;
+	std::cout<<"-h -> Show this information"<<std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -162,7 +163,11 @@ int main(int argc, char* argv[]) {
 		}else if((std::string(argv[i])=="-o")&&(std::string(argv[i+1])!="-i")){
 			output=argv[i+1];
 			i++;
+		}else if(std::string(argv[i])=="-h"){
+			usage();
+			return 0;
 		}else{
+			std::cout<<"Incorrect paramters! "<<std::endl;
 			usage();
 			return 0;
 		}
